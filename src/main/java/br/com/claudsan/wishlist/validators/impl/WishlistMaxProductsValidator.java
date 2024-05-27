@@ -1,6 +1,5 @@
 package br.com.claudsan.wishlist.validators.impl;
 
-import br.com.claudsan.wishlist.document.Product;
 import br.com.claudsan.wishlist.dto.ProductDTO;
 import br.com.claudsan.wishlist.validators.anotation.WishlistMaxProducts;
 import jakarta.validation.ConstraintValidator;

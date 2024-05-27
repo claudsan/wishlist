@@ -9,8 +9,8 @@ import org.springframework.stereotype.Component;
 @AllArgsConstructor
 public class CustomMetrics {
 
-    public static String WISHLIST_CREATED = "wishlist_created";
-    public static String WISHLIST_ADD_PRODUCTS = "wishlist_add_products";
+    public static final String WISHLIST_CREATED = "wishlist_created";
+    public static final String WISHLIST_ADD_PRODUCTS = "wishlist_add_products";
 
     private final MeterRegistry registry;
 

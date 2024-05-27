@@ -17,8 +17,8 @@ import reactor.core.publisher.Mono;
 
 import java.util.UUID;
 
-import static br.com.claudsan.wishlist.metrics.CustomMetrics.WISHLIST_CREATED;
 import static br.com.claudsan.wishlist.metrics.CustomMetrics.WISHLIST_ADD_PRODUCTS;
+import static br.com.claudsan.wishlist.metrics.CustomMetrics.WISHLIST_CREATED;
 import static java.lang.String.format;
 
 @Service
