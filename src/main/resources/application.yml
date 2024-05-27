@@ -1,0 +1,46 @@
+spring:
+  application.name: wishlist
+  data:
+    mongodb:
+      uri: mongodb://${DATABASE_USER}:${DATABASE_PASS}@${DATABASE_HOST}:${DATABASE_PORT}/${DATABASE_NAME}?authSource=${DATABASE_AUTH_NAME:admin}
+
+logging:
+  level:
+    org:
+      springframework:
+        data:
+          mongodb:
+            core:
+              MongoTemplate: DEBUG
+
+server:
+  port: ${WISHLIST_SERVER_PORT:8080}
+
+# DEFINIDO A QUANTIDADE DE PRODUTOS ATRAVES
+# DE PARAMETRIZACAO DEIXA A SOLUCAO MAIS DINAMICA
+wishlist:
+  max:
+    products: ${WISHLIST_MAX_PRODUCTS:20}
+
+management:
+  endpoint:
+    prometheus:
+      enabled: true
+  endpoints:
+    web:
+      exposure:
+        include: 'prometheus'
+  metrics:
+    tags:
+      application: ${spring.application.name}
+  prometheus:
+    metrics:
+      export:
+        enabled: true
+
+springdoc:
+  swagger-ui:
+    path: /swagger
+    operations-sorter: alpha
+  api-docs:
+    enabled: ${SWAGGER_ENABLE:true}

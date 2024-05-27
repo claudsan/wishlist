@@ -1,0 +1,9 @@
+FROM nginx:stable-alpine3.19-slim
+
+COPY infra/nginx/nginx.conf /etc/nginx/nginx.conf
+COPY infra/nginx/index.html /var/www/html/
+
+COPY build/reports/tests/test /var/www/html/gradle
+COPY build/reports/jacoco/test/html /var/www/html/jacoco
+
+EXPOSE 3333

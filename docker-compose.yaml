@@ -1,0 +1,105 @@
+version: '3'
+
+
+services:
+  wishlist:
+    build: .
+    image: wishlist:latest
+    hostname: wishlist
+    ports:
+      - ${WISHLIST_SERVER_PORT}:${WISHLIST_SERVER_PORT}
+    environment:
+      DATABASE_USER: ${DB_USERNAME}
+      DATABASE_PASS: ${DB_PASSWORD}
+      DATABASE_HOST: ${DB_HOST}
+      DATABASE_PORT: ${DB_PORT}
+      DATABASE_NAME: ${DB_NAME}
+      WISHLIST_MAX_PRODUCTS: ${WISHLIST_MAX_PRODUCTS}
+      WISHLIST_SERVER_PORT: ${WISHLIST_SERVER_PORT}
+    depends_on:
+      - mongo-db
+    links:
+      - mongo-db
+    networks:
+      - wishlist-network
+
+  mongo-express:
+    image: mongo-express
+    ports:
+      - "8081:8081"
+    environment:
+      ME_CONFIG_BASICAUTH_USERNAME: ${ME_USERNAME}
+      ME_CONFIG_BASICAUTH_PASSWORD: ${ME_PASSWORD}
+      ME_CONFIG_MONGODB_SERVER: ${DB_HOST}
+      ME_CONFIG_MONGODB_PORT: ${DB_PORT}
+      ME_CONFIG_MONGODB_ADMINUSERNAME: ${DB_USERNAME}
+      ME_CONFIG_MONGODB_ADMINPASSWORD: ${DB_PASSWORD}
+    links:
+      - mongo-db
+    networks:
+      - wishlist-network
+
+  mongo-db:
+    image: mongo
+    hostname: ${DB_HOST}
+    volumes:
+      - ./infra/mongo-init/:/docker-entrypoint-initdb.d/:ro
+    environment:
+      MONGO_INITDB_ROOT_USERNAME: ${DB_USERNAME}
+      MONGO_INITDB_ROOT_PASSWORD: ${DB_PASSWORD}
+    ports:
+      - ${DB_PORT}:${DB_PORT}
+    #volumes:
+    #  - /home/claudsan/mongo-data:/data/db
+    networks:
+      - wishlist-network
+    restart: always
+
+
+  nginx:
+    build:
+      dockerfile: DockerfileCoverage
+    image: coverage:latest
+    ports:
+      - 3333:3333
+    networks:
+      - wishlist-network
+
+  prometheus:
+    image: prom/prometheus
+    user: root
+    container_name: prometheus
+    hostname: prometheus
+    restart: unless-stopped
+    volumes:
+      - ./infra/prometheus:/etc/prometheus
+    command:
+      - '--config.file=/etc/prometheus/prometheus.yml'
+      - '--storage.tsdb.path=/prometheus'
+    ports:
+      - "9090:9090"
+    networks:
+      - wishlist-network
+
+  grafana:
+    build:
+      context: infra/grafana
+    container_name: grafana
+    hostname: grafana
+    environment:
+      GF_SECURITY_ADMIN_PASSWORD: ${GRAFANA_PASSWORD}
+      GF_DASHBOARDS_DEFAULT_HOME_DASHBOARD_PATH: "/var/lib/grafana/dashboards/wishlist-dashboard.json"
+
+    restart: unless-stopped
+    ports:
+      - "3000:3000"
+    networks:
+      - wishlist-network
+    depends_on:
+      - prometheus
+    links:
+      - prometheus
+
+networks:
+  wishlist-network:
+    driver: bridge

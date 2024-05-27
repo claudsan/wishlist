@@ -1,0 +1,16 @@
+server:
+  port: 0
+
+de:
+  flapdoodle:
+    mongodb:
+      embedded:
+        version: 5.0.5
+
+spring:
+  main:
+    banner-mode: off
+
+wishlist:
+  max:
+    products: ${WISHLIST_MAX_PRODUCTS:20}
